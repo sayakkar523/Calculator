@@ -9,6 +9,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Actions
+    private final char ADDITION = '+';
+    private final char SUBTRACTION = '-';
+    private final char MULTIPLICATION = '*';
+    private final char DIVISION = '/';
+    private final char EQUAL = '=';
+    private char current_action = EQUAL;
+    private char previous_action;
+    // Buttons
     private Button zero;
     private Button one;
     private Button two;
@@ -27,17 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private Button clear;
     private TextView info;
     private TextView result;
-//
-    private final char ADDITION='+';
-    private final char SUBTRACTION ='-';
-    private final char MULTIPLICATION='*';
-    private final char DIVISION='/';
-    private final char EQU='=';
-//
+    // Variables
     private double val1 = Double.NaN;
-    private double val2;
-
-
+    private double val2 = Double.NaN;
 
 
     @Override
@@ -46,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupUIViews();
-
-
 
         zero.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,11 +118,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Calculations
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // val1, action,
                 compute(ADDITION);
-                result.setText(String.valueOf(val1) + "+");
+                result.setText(String.valueOf(val1));
                 info.setText(null);
             }
         });
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 compute(SUBTRACTION);
-                result.setText(String.valueOf(val1) + SUBTRACTION);
+                result.setText(String.valueOf(val1));
                 info.setText(null);
             }
         });
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 compute(MULTIPLICATION);
-                result.setText(String.valueOf(val1) + "*");
+                result.setText(String.valueOf(val1));
                 info.setText(null);
             }
         });
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 compute(DIVISION);
-                result.setText(String.valueOf(val1) + "/");
+                result.setText(String.valueOf(val1));
                 info.setText(null);
             }
         });
@@ -158,8 +159,8 @@ public class MainActivity extends AppCompatActivity {
         equal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                compute(EQU);
-                result.setText(result.getText().toString() + String.valueOf(val2) +  " = " + String.valueOf(val1));
+                compute(EQUAL);
+                result.setText(String.valueOf(val1) + ", " + String.valueOf(val2));
                 info.setText(null);
             }
         });
@@ -167,81 +168,103 @@ public class MainActivity extends AppCompatActivity {
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (info.getText().length()>0){
+                if (info.getText().length() > 0) {
                     CharSequence name = info.getText().toString();
-                    info.setText(name.subSequence(0,name.length()-1));
-                }
-                else{
-                    val1=Double.NaN;
-                    val2=Double.NaN;
+                    info.setText(name.subSequence(0, name.length() - 1));
+                } else {
+                    val1 = Double.NaN;
+                    val2 = Double.NaN;
                     info.setText(null);
                     result.setText(null);
                 }
             }
         });
 
-
-
-
     }
 
 
-    private void setupUIViews(){
-
-
-        zero=findViewById(R.id.btnzero);
-        one=findViewById(R.id.btn1);
-        two=findViewById(R.id.btn2);
-        three=findViewById(R.id.btn3);
-        four=findViewById(R.id.btn4);
-        five=findViewById(R.id.btn5);
-        six=findViewById(R.id.btn6);
-        seven=findViewById(R.id.btn7);
-        eight=findViewById(R.id.btn8);
-        nine=findViewById(R.id.btn9);
-        add=findViewById(R.id.btnadd);
-        sub=findViewById(R.id.btnsub);
-        mul=findViewById(R.id.btnmul);
-        div=findViewById(R.id.btndiv);
-        equal=findViewById(R.id.btnequal);
-        clear=findViewById(R.id.btnclear);
-        info=findViewById(R.id.tvinput);
-        result=findViewById(R.id.tvresult);
-
+    private void setupUIViews() {
+        zero = findViewById(R.id.btn0);
+        one = findViewById(R.id.btn1);
+        two = findViewById(R.id.btn2);
+        three = findViewById(R.id.btn3);
+        four = findViewById(R.id.btn4);
+        five = findViewById(R.id.btn5);
+        six = findViewById(R.id.btn6);
+        seven = findViewById(R.id.btn7);
+        eight = findViewById(R.id.btn8);
+        nine = findViewById(R.id.btn9);
+        add = findViewById(R.id.btnadd);
+        sub = findViewById(R.id.btnsub);
+        mul = findViewById(R.id.btnmul);
+        div = findViewById(R.id.btndiv);
+        equal = findViewById(R.id.btnequal);
+        clear = findViewById(R.id.btnclear);
+        info = findViewById(R.id.tvinput);
+        result = findViewById(R.id.tvresult);
     }
 
 
+    private void compute(char action_type) {
 
-    private void compute(char action_type){
-        if(!Double.isNaN(val1)){
-            val2=Double.parseDouble(info.getText().toString());
+//      set action
+        previous_action = current_action;
+        current_action = action_type;
 
-            switch (action_type){
+//      get values
+        if (Double.isNaN(val1) && Double.isNaN(val2))
+            val1 = Double.parseDouble(info.getText().toString());
+        else if (!Double.isNaN(val1) && Double.isNaN(val2))
+            val2 = Double.parseDouble(info.getText().toString());
 
+        if (!Double.isNaN(val1) && !Double.isNaN(val2)) {
+//      get action
+            switch (current_action) {
                 case ADDITION:
-                    val1=val1+val2;
+                    val1 = val1 + val2;
+                    val2 = Double.NaN;
                     break;
 
                 case SUBTRACTION:
-                    val1=val1-val2;
+                    val1 = val1 - val2;
+                    val2 = Double.NaN;
                     break;
 
                 case MULTIPLICATION:
-                    val1=val1*val2;
+                    val1 = val1 * val2;
+                    val2 = Double.NaN;
                     break;
 
                 case DIVISION:
-                    val1=val1/val2;
+                    val1 = val1 / val2;
+                    val2 = Double.NaN;
                     break;
+            }
+            if (current_action == EQUAL) {
+                switch (previous_action) {
+                    case ADDITION:
+                        val1 = val1 + val2;
+                        val2 = Double.NaN;
+                        break;
 
-                case EQU:
-                    break;
+                    case SUBTRACTION:
+                        val1 = val1 - val2;
+                        val2 = Double.NaN;
+                        break;
+
+                    case MULTIPLICATION:
+                        val1 = val1 * val2;
+                        val2 = Double.NaN;
+                        break;
+
+                    case DIVISION:
+                        val1 = val1 / val2;
+                        val2 = Double.NaN;
+                        break;
+                }
             }
         }
 
-        else{
-            val1=Double.parseDouble(info.getText().toString());
-        }
     }
 
 }
